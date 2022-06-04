@@ -22,18 +22,22 @@ type Movie struct {
 
 func main() {
 
-	posterUrl := getPosterUrl(os.Args[1:])
-	movie, err := getPosterFromUrl(posterUrl)
-
+	movieUrl := getMovieTitleUrl(os.Args[1:])
+	movie, err := getMovieDataFromUrl(movieUrl)
 	if err != nil {
 		log.Fatal(err)
 	}
+        posterUrlLen := len(movie.Poster)
+        if !(posterUrlLen >= 4) {
+             log.Fatal("Movie Not Found!")
+        }
+
         fmt.Printf("Success Movie Found!\n")
 	fmt.Printf("Movie Title -> %s\nMovie Poster URL -> \n%s\n", 
                     movie.Title,
                     movie.Poster)
 
-	imgExtension := movie.Poster[len(movie.Poster)-4:]
+	imgExtension := movie.Poster[posterUrlLen-4:]
 	filename := strings.Join(strings.Split(movie.Title, " "), "_") + imgExtension
 
 	err = downloadFile(movie.Poster, filename)
@@ -45,13 +49,13 @@ func main() {
 
 }
 
-func getPosterUrl(terms []string) string {
+func getMovieTitleUrl(terms []string) string {
 	q := url.QueryEscape(strings.Join(terms, " "))
 	url := posterURL + "t=" + q + apiKey
 	return fmt.Sprintf("%s", url)
 }
 
-func getPosterFromUrl(url string) (*Movie, error) {
+func getMovieDataFromUrl(url string) (*Movie, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
