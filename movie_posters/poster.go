@@ -29,6 +29,8 @@ func main() {
 	}
         posterUrlLen := len(movie.Poster)
         if !(posterUrlLen >= 4) {
+             log.SetPrefix("Error: ")
+             log.SetFlags(0)
              log.Fatal("Movie Not Found!")
         }
 
